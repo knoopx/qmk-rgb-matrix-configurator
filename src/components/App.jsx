@@ -2,10 +2,11 @@ import { observer, useLocalObservable } from "mobx-react"
 import { useEffect } from "react"
 import classNames from "classnames"
 import color from "color"
+import { autorun } from "mobx"
 
 import { deserialize } from "../helpers/kle"
 import { rgb2qmk } from "../helpers/utils"
-import { COLORS } from "../helpers/constants"
+import { COLORS, LOCAL_STORAGE_KEY } from "../helpers/constants"
 
 import Palette from "./Palette"
 import Keyboard from "./Keyboard"
@@ -105,14 +106,15 @@ const App = () => {
     },
     setLayout(layout) {
       store.layout = layout
-      store.layers = [...Array(store.layerCount).keys()].map(() =>
-        Array(layout.length),
+      store.layers = [...Array(store.layerCount).keys()].map(
+        (i) => store.layers[i] ?? Array(layout.length),
       )
     },
     setLayerCount(count) {
       if (store.activeLayer >= count) {
         store.activeLayer = count - 1
       }
+
       if (count > store.layerCount) {
         store.activeLayer = count - 1
       }
@@ -138,18 +140,24 @@ const App = () => {
     async paste() {
       store.setInput(await navigator.clipboard.readText())
     },
+    restoreState() {
+      const data = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (data) {
+        Object.assign(store, JSON.parse(data))
+      }
+    },
   }))
 
-  useEffect(() => {
+  const handleInput = (input) => {
     let parsed = []
     store.setLayoutError(null)
 
     try {
-      parsed = JSON.parse(store.input)
+      parsed = JSON.parse(input)
     } catch (e1) {
       try {
         // try to parse as JSONL
-        parsed = Function(`"use strict"; return [${store.input}]`)()
+        parsed = Function(`"use strict"; return [${input}]`)()
       } catch (e2) {
         store.setLayoutError(e2.message)
       }
@@ -162,7 +170,30 @@ const App = () => {
       }
     }
     store.setLayout(keys)
-  }, [store, store.input])
+  }
+
+  useEffect(() => {
+    store.restoreState()
+    autorun(() => {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify({
+          // activeColor: color(store.activeColor).hsl().toString(),
+          input: store.input,
+          layerCount: store.layerCount,
+          layers: store.layers.map((layer) =>
+            layer.map((x) => color(x).hsl().toString()),
+          ),
+          lightsOff: store.lightsOff,
+          displayLabels: store.displayLabels,
+        }),
+      )
+    })
+  }, [])
+
+  useEffect(() => {
+    handleInput(store.input)
+  }, [store.input])
 
   return (
     <div className="container flex flex-col mx-auto px-16 py-8 space-y-8 min-h-screen">

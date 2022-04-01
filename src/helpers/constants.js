@@ -1,5 +1,7 @@
 import color from "color"
 
+const LOCAL_STORAGE_KEY = "qmk-matrix-configurator"
+
 const COLORS = [...Array(360).keys()]
   .filter((i) => i % 16 === 0)
   .map((h) => {
@@ -36,4 +38,4 @@ const COLORS = [...Array(360).keys()]
 // console.log(chroma.distance("#ff0000", "#ffffff"))
 // const COLORS = Object.values(COLOR_MAP).sort((a, b) => chroma.distance(a, b))
 
-export { COLORS }
+export { LOCAL_STORAGE_KEY, COLORS }
