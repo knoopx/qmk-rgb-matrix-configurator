@@ -4,5 +4,6 @@ import Icons from "unplugin-icons/vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/qmk-rgb-matrix-configurator/",
   plugins: [react(), Icons({ compiler: "jsx", jsx: "react" })],
 })
