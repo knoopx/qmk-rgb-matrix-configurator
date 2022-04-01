@@ -1,5 +1,6 @@
 import classNames from "classnames"
 import color from "color"
+import { isEqual } from "lodash"
 import { observer } from "mobx-react"
 
 const LABEL_CLASSES = [
@@ -22,7 +23,7 @@ const Keycap = ({
   keySize,
   padding,
   color: keyColor,
-  rgbColor = "transparent",
+  rgbColor = color.hsv(0, 0, 0),
   onClick,
   labels,
   legendColor,
@@ -40,6 +41,10 @@ const Keycap = ({
 
   keyColor = color(keyColor).fade(lightsOff ? 0.96 : 0)
   rgbColor = color(rgbColor)
+
+  if (isEqual(rgbColor.hsv().array(), [0, 0, 0])) {
+    rgbColor = color("transparent")
+  }
 
   const borderRadius = keySize * 0.1
   const positions = ["bottom", "left"]

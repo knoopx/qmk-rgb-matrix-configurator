@@ -5,7 +5,7 @@ const COLORS = [...Array(360).keys()]
   .map((h) => {
     return color.hsl(h, 100, 50)
   })
-  .concat(["white", color.hsv(360, 100, 0)])
+  .concat([color.hsv(0, 0, 100), color.hsv(0, 100, 0)])
 
 // const COLOR_MAP = {
 //   RGB_AZURE: "#99f5ff",

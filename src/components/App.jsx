@@ -1,6 +1,7 @@
 import { observer, useLocalObservable } from "mobx-react"
 import { useEffect } from "react"
 import classNames from "classnames"
+import color from "color"
 
 import { deserialize } from "../helpers/kle"
 import { rgb2qmk } from "../helpers/utils"
@@ -17,6 +18,8 @@ import IcBaselineFolderOpen from "~icons/ic/baseline-folder-open"
 import IcBaselineContentPaste from "~icons/ic/baseline-content-paste"
 import IcBaselineEdit from "~icons/ic/baseline-edit"
 import IcBaselineEmojiSymbols from "~icons/ic/baseline-emoji-symbols"
+import IcBaselineFormatColorFill from "~icons/ic/baseline-format-color-fill"
+import IcBaselineBorderClear from "~icons/ic/baseline-border-clear"
 
 const PanelButton = ({ className, as: Component = "a", ...props }) => {
   return (
@@ -81,10 +84,15 @@ const App = () => {
     },
     toggleRGBColor(i) {
       if (store.layers[store.activeLayer][i] === store.activeColor) {
-        store.layers[store.activeLayer][i] = "transparent"
+        store.layers[store.activeLayer][i] = color.hsv(0, 0, 0)
       } else {
         store.layers[store.activeLayer][i] = store.activeColor
       }
+    },
+    fillLayer(color) {
+      store.layers[store.activeLayer] = store.layers[store.activeLayer].map(
+        () => color,
+      )
     },
     toggleLabels() {
       store.displayLabels = !store.displayLabels
@@ -258,12 +266,31 @@ const App = () => {
             </div>
           </div>
 
-          <Palette
-            activeColor={store.activeColor}
-            colors={COLORS}
-            onSelectColor={(color) => store.setActiveColor(color)}
-          />
-
+          <div className="flex">
+            <Palette
+              activeColor={store.activeColor}
+              colors={COLORS}
+              onSelectColor={store.setActiveColor}
+            />
+            <div className="flex items-center ml-auto space-x-1">
+              <a
+                className="flex items-center justify-center h-8 w-8 cursor-pointer"
+                onClick={() => {
+                  store.fillLayer(store.activeColor)
+                }}
+              >
+                <IcBaselineFormatColorFill />
+              </a>
+              <a
+                className="flex items-center justify-center h-8 w-8 cursor-pointer"
+                onClick={() => {
+                  store.fillLayer(color.hsv(0, 0, 0))
+                }}
+              >
+                <IcBaselineBorderClear />
+              </a>
+            </div>
+          </div>
           <TextArea showCopy disabled value={store.asQMK} />
         </div>
       )}
