@@ -5,7 +5,6 @@ import classNames from "classnames"
 import { deserialize } from "../helpers/kle"
 import { rgb2qmk } from "../helpers/utils"
 import { COLORS } from "../helpers/constants"
-import * as defaultLayout from "../layouts/82"
 
 import Palette from "./Palette"
 import Keyboard from "./Keyboard"
@@ -147,7 +146,14 @@ const App = () => {
         store.setLayoutError(e2.message)
       }
     }
-    store.setLayout(deserialize(parsed).keys)
+
+    let { keys } = deserialize(parsed)
+    if (keys.length === 0) {
+      if (parsed.layouts && parsed.layouts.keymap) {
+        keys = deserialize(parsed.layouts.keymap).keys
+      }
+    }
+    store.setLayout(keys)
   }, [store, store.input])
 
   return (
