@@ -91,9 +91,9 @@ const App = () => {
       }
     },
     fillLayer(color) {
-      store.layers[store.activeLayer] = store.layers[store.activeLayer].map(
-        () => color,
-      )
+      store.layers[store.activeLayer].forEach((_, i) => {
+        store.layers[store.activeLayer][i] = color
+      })
     },
     toggleLabels() {
       store.displayLabels = !store.displayLabels
@@ -106,9 +106,12 @@ const App = () => {
     },
     setLayout(layout) {
       store.layout = layout
-      store.layers = [...Array(store.layerCount).keys()].map(
-        (i) => store.layers[i] ?? Array(layout.length),
-      )
+    },
+    resetLayers(resize = false) {
+      store.layers = [...Array(store.layerCount).keys()].map((i) => {
+        if (resize && store.layers[i]) store.layers[i]
+        return Array(store.layout.length)
+      })
     },
     setLayerCount(count) {
       if (store.activeLayer >= count) {
@@ -120,9 +123,7 @@ const App = () => {
       }
 
       store.layerCount = count
-      store.layers = [...Array(count).keys()].map(
-        (i) => store.layers[i] ?? Array(store.layout.length),
-      )
+      store.resetLayers(true)
     },
     setLayoutError(error) {
       store.layoutError = error
@@ -136,9 +137,11 @@ const App = () => {
         store.input = e.target.result
       }
       reader.readAsText(file)
+      store.resetLayers()
     },
     async paste() {
       store.setInput(await navigator.clipboard.readText())
+      store.resetLayers()
     },
     restoreState() {
       const data = localStorage.getItem(LOCAL_STORAGE_KEY)
