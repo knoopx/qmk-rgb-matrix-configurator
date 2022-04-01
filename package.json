@@ -1,7 +1,7 @@
 {
-  "name": "vite-react-starter",
-  "private": true,
-  "version": "0.0.0",
+  "name": "qmk-rgb-matrix-configurator",
+  "homepage": "https://knoopx.github.io/qmk-rgb-matrix-configurator/",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
