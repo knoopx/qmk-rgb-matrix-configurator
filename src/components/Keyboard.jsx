@@ -1,5 +1,4 @@
 import { observer } from "mobx-react"
-import { useEffect } from "react"
 
 import Keycap from "./Keycap"
 
@@ -14,7 +13,7 @@ const Keyboard = ({
   lightsOff,
   displayLabels,
 }) => {
-  if (layout.length === 0) {
+  if (layout.keys.length === 0) {
     return null
   }
 
@@ -24,14 +23,18 @@ const Keyboard = ({
         className="relative"
         style={{
           height: Math.max(
-            ...layout.map((row) => (row.y + row.height) * keySize - padding),
+            ...layout.keys.map(
+              (row) => (row.y + row.height) * keySize - padding,
+            ),
           ),
           width: Math.max(
-            ...layout.map((row) => (row.x + row.width) * keySize - padding),
+            ...layout.keys.map(
+              (row) => (row.x + row.width) * keySize - padding,
+            ),
           ),
         }}
       >
-        {layout.map((key, i) => {
+        {layout.keys.map((key, i) => {
           return (
             <Keycap
               key={i}

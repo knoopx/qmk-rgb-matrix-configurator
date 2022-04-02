@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { useRef, useState, useEffect } from "react"
 
 import IcBaselineCopy from "~icons/ic/baseline-content-copy"
@@ -45,4 +46,4 @@ const TextArea = ({
   )
 }
 
-export default TextArea
+export default observer(TextArea)

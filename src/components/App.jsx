@@ -1,11 +1,10 @@
 import { observer, useLocalObservable } from "mobx-react"
-import { useEffect } from "react"
 import classNames from "classnames"
 import color from "color"
 import { autorun } from "mobx"
+import { range } from "lodash"
 
-import { deserialize } from "../helpers/kle"
-import { rgb2qmk } from "../helpers/utils"
+import { rgb2qmk, tryParse } from "../helpers/utils"
 import { COLORS, LOCAL_STORAGE_KEY } from "../helpers/constants"
 
 import Palette from "./Palette"
@@ -46,157 +45,144 @@ const ToggablePanelButton = ({ value, className, ...props }) => {
 }
 
 const App = () => {
-  const store = useLocalObservable(() => ({
-    activeLayer: 0,
-    activeColor: COLORS[0],
-    input: [], // JSON.stringify(defaultLayout.default),
-    layout: [],
-    layoutError: null,
-    layers: [],
-    layerCount: 4,
-    lightsOff: false,
-    displayLabels: false,
-    isEditingLayout: false,
+  const store = useLocalObservable(() => {
+    let initialState = {}
 
-    get keymapJSON() {
-      return JSON.stringify(store.keymap)
-    },
-    get asQMK() {
-      return `const uint8_t PROGMEM rgb_matrix_led_map[][DRIVER_LED_TOTAL][${
-        store.layerCount
-      }] = {\n${store.layers
-        .map((leds) => `   { ${leds.map(rgb2qmk).join(", ")} }`)
-        .join(",\n")}\n};`
-    },
-    get isLayoutEmpty() {
-      return store.layout.length === 0
-    },
-    get isLayoutValid() {
-      return !store.layoutError
-    },
-    setInput(input) {
-      store.input = input
-    },
-    setActiveColor(color) {
-      store.activeColor = color
-    },
-    setActiveLayer(index) {
-      store.activeLayer = index
-    },
-    toggleRGBColor(i) {
-      if (store.layers[store.activeLayer][i] === store.activeColor) {
-        store.layers[store.activeLayer][i] = color.hsv(0, 0, 0)
-      } else {
-        store.layers[store.activeLayer][i] = store.activeColor
-      }
-    },
-    fillLayer(color) {
-      store.layers[store.activeLayer].forEach((_, i) => {
-        store.layers[store.activeLayer][i] = color
-      })
-    },
-    toggleLabels() {
-      store.displayLabels = !store.displayLabels
-    },
-    toggleLights() {
-      store.lightsOff = !store.lightsOff
-    },
-    toggleEditingLayout() {
-      store.isEditingLayout = !store.isEditingLayout
-    },
-    setLayout(layout) {
-      store.layout = layout
-    },
-    resetLayers(resize = false) {
-      store.layers = [...Array(store.layerCount).keys()].map((i) => {
-        if (resize && store.layers[i]) store.layers[i]
-        return Array(store.layout.length)
-      })
-    },
-    setLayerCount(count) {
-      if (store.activeLayer >= count) {
-        store.activeLayer = count - 1
-      }
-
-      if (count > store.layerCount) {
-        store.activeLayer = count - 1
-      }
-
-      store.layerCount = count
-      store.resetLayers(true)
-    },
-    setLayoutError(error) {
-      store.layoutError = error
-    },
-    loadFile(e) {
-      const [file] = e.target.files
-      if (!file) return
-
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        store.input = e.target.result
-      }
-      reader.readAsText(file)
-      store.resetLayers()
-    },
-    async paste() {
-      store.setInput(await navigator.clipboard.readText())
-      store.resetLayers()
-    },
-    restoreState() {
-      const data = localStorage.getItem(LOCAL_STORAGE_KEY)
-      if (data) {
-        Object.assign(store, JSON.parse(data))
-      }
-    },
-  }))
-
-  const handleInput = (input) => {
-    let parsed = []
-    store.setLayoutError(null)
-
-    try {
-      parsed = JSON.parse(input)
-    } catch (e1) {
-      try {
-        // try to parse as JSONL
-        parsed = Function(`"use strict"; return [${input}]`)()
-      } catch (e2) {
-        store.setLayoutError(e2.message)
-      }
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (data) {
+      initialState = JSON.parse(data)
     }
 
-    let { keys } = deserialize(parsed)
-    if (keys.length === 0) {
-      if (parsed.layouts && parsed.layouts.keymap) {
-        keys = deserialize(parsed.layouts.keymap).keys
-      }
+    return {
+      activeLayer: 0,
+      activeColor: COLORS[0],
+      input: "",
+      layers: [],
+      layerCount: 4,
+      layoutError: "",
+      lightsOff: true,
+      displayLabels: false,
+      isEditingLayout: false,
+      ...initialState,
+
+      get asQMK() {
+        return `const uint8_t PROGMEM rgb_matrix_led_map[][DRIVER_LED_TOTAL][${
+          store.layerCount
+        }] = {\n${store.layers
+          .map((leds) => `   { ${leds.map(rgb2qmk).join(", ")} }`)
+          .join(",\n")}\n};`
+      },
+      get isLayoutEmpty() {
+        return store.layout.keys.length === 0
+      },
+      get isLayoutValid() {
+        return !store.layoutError
+      },
+      setActiveColor(color) {
+        store.activeColor = color
+      },
+      setActiveLayer(index) {
+        store.activeLayer = index
+      },
+      toggleRGBColor(i) {
+        if (store.layers[store.activeLayer][i] === store.activeColor) {
+          store.layers[store.activeLayer][i] = color.hsv(0, 0, 0)
+        } else {
+          store.layers[store.activeLayer][i] = store.activeColor
+        }
+      },
+      fillLayer(color) {
+        store.layers[store.activeLayer].forEach((_, i) => {
+          store.layers[store.activeLayer][i] = color
+        })
+      },
+      toggleLabels() {
+        store.displayLabels = !store.displayLabels
+      },
+      toggleLights() {
+        store.lightsOff = !store.lightsOff
+      },
+      toggleEditingLayout() {
+        store.isEditingLayout = !store.isEditingLayout
+      },
+      setInput(input, resetLayers = false) {
+        store.input = input
+        if (resetLayers) store.resetLayers()
+      },
+      get layout() {
+        try {
+          return tryParse(store.input)
+        } catch (e) {
+          store.layoutError = e.message
+          return { meta: {}, keys: [] }
+        }
+      },
+      resetLayers() {
+        store.layers = range(store.layerCount).map(() => {
+          return new Array(store.layout.keys.length).map(() =>
+            color.hsv(0, 0, 0),
+          )
+        })
+      },
+      setLayerCount(count) {
+        if (store.activeLayer >= count) {
+          store.activeLayer = count - 1
+        }
+
+        if (count > store.layerCount) {
+          store.activeLayer = count - 1
+        }
+
+        store.layers = range(count).map((l) => {
+          return range(store.layout.keys.length).map(
+            (i) =>
+              (store.layers[l] && store.layers[l][i]) ?? color.hsv(0, 0, 0),
+          )
+        })
+        store.layerCount = count
+      },
+
+      loadFile(e) {
+        const [file] = e.target.files
+        if (!file) return
+
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          // handle KLE JSON(L)
+          const result = tryParse(e.target.result)
+
+          if (result.keys && result.keys.length === 0) {
+            // handle VIA JSON
+            const parsed = JSON.parse(e.target.result)
+            if (parsed.layouts && parsed.layouts.keymap) {
+              store.setInput(JSON.stringify(parsed.layouts.keymap), true)
+            }
+          } else {
+            store.setInput(e.target.result, true)
+          }
+        }
+        reader.readAsText(file)
+      },
+      async paste() {
+        store.setInput(await navigator.clipboard.readText(), true)
+      },
     }
-    store.setLayout(keys)
-  }
+  })
 
-  useEffect(() => {
-    store.restoreState()
-    autorun(() => {
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify({
-          // activeColor: color(store.activeColor).hsl().toString(),
-          input: store.input,
-          layerCount: store.layerCount,
-          layers: store.layers.map((layer) =>
-            layer.map((x) => color(x).hsl().toString()),
-          ),
-          lightsOff: store.lightsOff,
-          displayLabels: store.displayLabels,
-        }),
-      )
-    })
-  }, [])
-
-  useEffect(() => {
-    handleInput(store.input)
-  }, [store.input])
+  autorun(() => {
+    localStorage.setItem(
+      LOCAL_STORAGE_KEY,
+      JSON.stringify({
+        input: store.input,
+        layerCount: store.layerCount,
+        layers: store.layers.map((layer) =>
+          layer.map((x) => color(x).hsl().toString()),
+        ),
+        lightsOff: store.lightsOff,
+        displayLabels: store.displayLabels,
+      }),
+    )
+  })
 
   return (
     <div className="container flex flex-col mx-auto px-16 py-8 space-y-8 min-h-screen">
@@ -220,13 +206,13 @@ const App = () => {
           <TextArea
             value={store.input}
             onChange={(e) => {
-              store.setInput(e.target.value)
+              store.setInput(e.target.value, false)
             }}
           />
 
           <div className="flex items-center justify-end ml-auto text-right text-xs">
             <IcBaselineKeyboard />
-            &nbsp;{store.layout.length} keys
+            &nbsp;{store.layout.keys.length} keys
           </div>
         </div>
       )}
@@ -263,11 +249,7 @@ const App = () => {
               layout={store.layout}
               displayLabels={store.displayLabels}
               lightsOff={store.lightsOff}
-              rgbColor={(i) =>
-                store.layers[store.activeLayer].length > i &&
-                store.layers[store.activeLayer] &&
-                store.layers[store.activeLayer][i]
-              }
+              rgbColor={(i) => store.layers[store.activeLayer][i]}
               onClickKey={(i) => {
                 store.toggleRGBColor(i)
               }}

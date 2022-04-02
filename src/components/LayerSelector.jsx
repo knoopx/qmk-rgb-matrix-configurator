@@ -1,4 +1,5 @@
 import classNames from "classnames"
+import { observer } from "mobx-react"
 
 import IcBaselineAdd from "~icons/ic/baseline-add"
 import IcBaselineMinus from "~icons/ic/baseline-minus"
@@ -53,4 +54,4 @@ const LayerSelector = ({
   </div>
 )
 
-export default LayerSelector
+export default observer(LayerSelector)

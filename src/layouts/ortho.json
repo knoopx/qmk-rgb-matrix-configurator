@@ -1,42 +1,105 @@
 [
-
+  {
+    "name": "Planck #1",
+    "author": "tyler.thrailkill",
+    "background": {
+      "name": "Aluminium brushed",
+      "style": "background-image: url('/bg/metal/aluminum_texture1642.jpg');"
+    },
+    "switchMount": "cherry",
+    "switchBrand": "cherry",
+    "switchType": "MX1A-G1xx",
+    "plate": true
+  },
   [
-    { "t": "#000000" },
+    {
+      "c": "#d7e1eb",
+      "sm": "cherry",
+      "sb": "cherry",
+      "st": "MX1A-G1xx"
+    },
+    "~\n`\n\n\n\n\ntab",
+    {
+      "c": "#65af4c"
+    },
+    "1\n!\n\n\n\n\nq\n\n\nQ",
+    "2\n@\n\n\n\n\nw\n\n\nW",
+    "3\n#\n\n\n\n\ne\n\n\nE",
+    "4\n$\n\n\n\n\nr\n\n\nR",
+    "5\n%\n\n\n\n\nt\n\n\nT",
+    "6\n^\n\n\n\n\ny\n\n\nY",
+    "7\n&\n\n\n\n\nu\n\n\nU",
+    "8\n*\n\n\n\n\ni\n\n\nI",
+    "9\n(\n\n\n\n\no\n\n\nO",
+    "0\n)\n\n\n\n\np\n\n\nP",
+    {
+      "c": "#d7e1eb",
+      "t": "#030000",
+      "a": 7
+    },
+    ""
+  ],
+  [
+    {
+      "t": "#000000",
+      "a": 4
+    },
     "\n\n\ncmd\n\n\nesc",
-    { "c": "#65af4c" },
+    {
+      "c": "#65af4c"
+    },
     "[\n[\n\n\n\n\na\n\n\nA",
     "]\n]\n\n\n\n\ns\n\n\nS",
     "_\n_\n\n\n\n\nd\n\n\nD",
     "-\n-\n\n\n\n\nf\n\n\nF",
     "+\n+\n\n\n\n\ng\n\n\nG",
-    { "a": 6 },
+    {
+      "a": 6
+    },
     "h\n\n\n\n\n\n\n\nH",
-    { "a": 4 },
+    {
+      "a": 4
+    },
     "enter\nenter\n\n\n\n\nj\n\n\nJ",
     "=\n=\n\n\n\n\nk\n\n\nK",
     "{\n{\n\n\n\n\nl\n\n\nL",
     "}\n}\n\nopt\n\n\n;\n\n\n:",
-    { "c": "#d7e1eb", "a": 6 },
+    {
+      "c": "#d7e1eb",
+      "a": 6
+    },
     "'\n\n\n\n\n\n\n\n\""
   ],
   [
-    { "a": 4 },
+    {
+      "a": 4
+    },
     "\n\n\nhyper\n\n\ndel",
-    { "c": "#65af4c" },
+    {
+      "c": "#65af4c"
+    },
     "f1\nf7\n\n\n\n\nz\n\n\nZ",
     "f2\nf8\n\n\n\n\nx\n\n\nX",
     "f3\nf9\n\n\n\n\nc\n\n\nC",
     "f4\nf10\n\n\n\n\nv\n\n\nV",
     "f5\nf11\n\n\n\n\nb\n\n\nB",
     "f6\nf12\n\n\n\n\nn\n\n\nN",
-    { "a": 6 },
+    {
+      "a": 6
+    },
     "m\n\n\n\n\n\n\n\nM",
-    { "a": 4 },
+    {
+      "a": 4
+    },
     "\nprvs\n\n\n\n\n,\n\n\n<",
-    { "a": 6 },
+    {
+      "a": 6
+    },
     ".\n\n\n\n\n\n\n\n>",
     "/\n\n\n\n\n\n\n\n?",
-    { "c": "#d7e1eb" },
+    {
+      "c": "#d7e1eb"
+    },
     "\\\n\n\n\n\n\n\n\n|"
   ],
   [
@@ -45,12 +108,18 @@
     "idk",
     "ctrl",
     "lower",
-    { "a": 4 },
+    {
+      "a": 4
+    },
     "\n\n\nshift\n\n\nbckspc",
-    { "a": 6 },
+    {
+      "a": 6
+    },
     "space",
     "raise",
-    { "a": 4 },
+    {
+      "a": 4
+    },
     "\nnext\n\n\n\n\n˂",
     "\nvol up\n\n\n\n\n˄",
     "\nvol dn\n\n\n\n\n˅",

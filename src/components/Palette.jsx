@@ -1,4 +1,5 @@
 import classNames from "classnames"
+import { observer } from "mobx-react"
 
 const Palette = ({ activeColor, colors, onSelectColor }) => {
   return (
@@ -17,4 +18,4 @@ const Palette = ({ activeColor, colors, onSelectColor }) => {
   )
 }
 
-export default Palette
+export default observer(Palette)
