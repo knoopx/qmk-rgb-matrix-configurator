@@ -16,10 +16,8 @@ const TextArea = ({
 
   useEffect(() => {
     const { scrollHeight } = ref.current
-    const { value: lineHeight } = ref.current
-      .computedStyleMap()
-      .get("line-height")
-
+    let { lineHeight } = getComputedStyle(ref.current)
+    lineHeight = Number(lineHeight.replace(/px$/, ""))
     const currentRows = Math.ceil(scrollHeight / lineHeight)
     setRows(Math.min(maxRows, Math.max(currentRows, minRows)))
   }, [value, maxRows, minRows])
