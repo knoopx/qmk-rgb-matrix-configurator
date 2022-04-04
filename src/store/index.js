@@ -1,7 +1,8 @@
-import { range } from "lodash";
-import { rgb2qmk, tryParse } from "../helpers/utils";
-import { COLORS, LOCAL_STORAGE_KEY } from "../helpers/constants";
-import color from 'color'
+import { range } from "lodash"
+import color from "color"
+
+import { rgb2qmk, tryParse } from "../helpers/utils"
+import { COLORS, LOCAL_STORAGE_KEY } from "../helpers/constants"
 
 export function createStore() {
   return {
@@ -20,108 +21,106 @@ export function createStore() {
         this.layerCount
       }] = {\n${this.layers
         .map((leds) => `   { ${leds.map(rgb2qmk).join(", ")} }`)
-        .join(",\n")}\n};`;
+        .join(",\n")}\n};`
     },
     get isLayoutEmpty() {
-      return this.layout.keys.length === 0 || this.layers.length == 0;
+      return this.layout.keys.length === 0 || this.layers.length == 0
     },
     get isLayoutValid() {
-      return !this.layoutError;
+      return !this.layoutError
     },
     setActiveColor(color) {
-      this.activeColor = color;
+      this.activeColor = color
     },
     setActiveLayer(index) {
-      this.activeLayer = index;
+      this.activeLayer = index
     },
     toggleRGBColor(i) {
       if (this.layers[this.activeLayer][i] === this.activeColor) {
-        this.layers[this.activeLayer][i] = color.hsv(0, 0, 0);
+        this.layers[this.activeLayer][i] = color.hsv(0, 0, 0)
       } else {
-        this.layers[this.activeLayer][i] = this.activeColor;
+        this.layers[this.activeLayer][i] = this.activeColor
       }
     },
     fillLayer(color) {
       this.layers[this.activeLayer].forEach((_, i) => {
-        this.layers[this.activeLayer][i] = color;
-      });
+        this.layers[this.activeLayer][i] = color
+      })
     },
     toggleLabels() {
-      this.displayLabels = !this.displayLabels;
+      this.displayLabels = !this.displayLabels
     },
     toggleLights() {
-      this.lightsOff = !this.lightsOff;
+      this.lightsOff = !this.lightsOff
     },
     toggleEditingLayout() {
-      this.isEditingLayout = !this.isEditingLayout;
+      this.isEditingLayout = !this.isEditingLayout
     },
     setInput(input) {
-      this.input = input;
-      this.resetLayers();
+      this.input = input
+      this.resetLayers()
     },
     get layout() {
       try {
-        return tryParse(this.input);
+        return tryParse(this.input)
       } catch (e) {
-        this.layoutError = e.message;
-        return { meta: {}, keys: [] };
+        this.layoutError = e.message
+        return { meta: {}, keys: [] }
       }
     },
     resetLayers() {
       this.layers = range(this.layerCount).map(() => {
-        return new Array(this.layout.keys.length).map(() =>
-          color.hsv(0, 0, 0)
-        );
-      });
+        return new Array(this.layout.keys.length).map(() => color.hsv(0, 0, 0))
+      })
     },
     setLayerCount(count) {
       if (this.activeLayer >= count) {
-        this.activeLayer = count - 1;
+        this.activeLayer = count - 1
       }
 
       if (count > this.layerCount) {
-        this.activeLayer = count - 1;
+        this.activeLayer = count - 1
       }
 
       this.layers = range(count).map((l) => {
         return range(this.layout.keys.length).map(
-          (i) => (this.layers[l] && this.layers[l][i]) ?? color.hsv(0, 0, 0)
-        );
-      });
-      this.layerCount = count;
+          (i) => (this.layers[l] && this.layers[l][i]) ?? color.hsv(0, 0, 0),
+        )
+      })
+      this.layerCount = count
     },
 
     loadFile(e) {
-      const [file] = e.target.files;
-      if (!file) return;
+      const [file] = e.target.files
+      if (!file) return
 
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = (e) => {
         // handle KLE JSON(L)
-        const result = tryParse(e.target.result);
+        const result = tryParse(e.target.result)
 
         if (result.keys && result.keys.length === 0) {
           // handle VIA JSON
-          const parsed = JSON.parse(e.target.result);
+          const parsed = JSON.parse(e.target.result)
           if (parsed.layouts && parsed.layouts.keymap) {
-            this.setInput(JSON.stringify(parsed.layouts.keymap));
+            this.setInput(JSON.stringify(parsed.layouts.keymap))
           }
         } else {
-          this.setInput(e.target.result);
+          this.setInput(e.target.result)
         }
-      };
-      reader.readAsText(file);
+      }
+      reader.readAsText(file)
     },
     async paste() {
-      this.setInput(await navigator.clipboard.readText());
+      this.setInput(await navigator.clipboard.readText())
     },
-    restoreState(){
-      const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    restoreState() {
+      const data = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (data) {
         Object.assign(this, JSON.parse(data))
       }
     },
-    persistState(){
+    persistState() {
       localStorage.setItem(
         LOCAL_STORAGE_KEY,
         JSON.stringify({
@@ -134,6 +133,6 @@ export function createStore() {
           displayLabels: this.displayLabels,
         }),
       )
-    }
-  };
+    },
+  }
 }

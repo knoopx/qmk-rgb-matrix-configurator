@@ -1,7 +1,8 @@
-import React from 'react'
-import { createStore } from '../store'
-import { useLocalObservable } from 'mobx-react'
-import { autorun } from 'mobx'
+import React from "react"
+import { useLocalObservable } from "mobx-react"
+import { autorun } from "mobx"
+
+import { createStore } from "../store"
 
 const StoreContext = React.createContext(null)
 

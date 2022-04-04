@@ -1,24 +1,23 @@
-import { observer } from "mobx-react";
-import classNames from "classnames";
-import color from "color";
+import { observer } from "mobx-react"
+import classNames from "classnames"
+import color from "color"
 
-import { useStore } from "../hooks";
+import { useStore } from "../hooks"
+import { COLORS } from "../helpers/constants"
 
-import { COLORS } from "../helpers/constants";
+import Palette from "./Palette"
+import Keyboard from "./Keyboard"
+import TextArea from "./TextArea"
+import LayerSelector from "./LayerSelector"
 
-import Palette from "./Palette";
-import Keyboard from "./Keyboard";
-import TextArea from "./TextArea";
-import LayerSelector from "./LayerSelector";
-
-import IcBaselineKeyboard from "~icons/ic/baseline-keyboard";
-import IcBaselineLightbulb from "~icons/ic/baseline-lightbulb";
-import IcBaselineFolderOpen from "~icons/ic/baseline-folder-open";
-import IcBaselineContentPaste from "~icons/ic/baseline-content-paste";
-import IcBaselineEdit from "~icons/ic/baseline-edit";
-import IcBaselineEmojiSymbols from "~icons/ic/baseline-emoji-symbols";
-import IcBaselineFormatColorFill from "~icons/ic/baseline-format-color-fill";
-import IcBaselineBorderClear from "~icons/ic/baseline-border-clear";
+import IcBaselineKeyboard from "~icons/ic/baseline-keyboard"
+import IcBaselineLightbulb from "~icons/ic/baseline-lightbulb"
+import IcBaselineFolderOpen from "~icons/ic/baseline-folder-open"
+import IcBaselineContentPaste from "~icons/ic/baseline-content-paste"
+import IcBaselineEdit from "~icons/ic/baseline-edit"
+import IcBaselineEmojiSymbols from "~icons/ic/baseline-emoji-symbols"
+import IcBaselineFormatColorFill from "~icons/ic/baseline-format-color-fill"
+import IcBaselineBorderClear from "~icons/ic/baseline-border-clear"
 
 const PanelButton = ({ className, as: Component = "button", ...props }) => {
   return (
@@ -28,12 +27,12 @@ const PanelButton = ({ className, as: Component = "button", ...props }) => {
         className,
         {
           "hover:bg-neutral-600 cursor-pointer": !props.disabled,
-        }
+        },
       )}
       {...props}
     />
-  );
-};
+  )
+}
 
 const ToggablePanelButton = ({ value, className, ...props }) => {
   return (
@@ -43,13 +42,13 @@ const ToggablePanelButton = ({ value, className, ...props }) => {
       })}
       {...props}
     />
-  );
-};
+  )
+}
 
 const App = () => {
-  const store = useStore();
+  const store = useStore()
 
-  const canPaste = "readText" in navigator.clipboard;
+  const canPaste = "readText" in navigator.clipboard
 
   return (
     <div className="container flex flex-col mx-auto px-16 py-8 space-y-8 min-h-screen">
@@ -61,7 +60,9 @@ const App = () => {
 
         <PanelButton
           disabled={!canPaste}
-          title={!canPaste && "Your browser does not allow to read clipboard content"}
+          title={
+            !canPaste && "Your browser does not allow to read clipboard content"
+          }
           className={{
             "opacity-25": !canPaste,
           }}
@@ -80,7 +81,7 @@ const App = () => {
           <TextArea
             value={store.input}
             onChange={(e) => {
-              store.setInput(e.target.value);
+              store.setInput(e.target.value)
             }}
           />
 
@@ -125,7 +126,7 @@ const App = () => {
               lightsOff={store.lightsOff}
               rgbColor={(i) => store.layers[store.activeLayer][i]}
               onClickKey={(i) => {
-                store.toggleRGBColor(i);
+                store.toggleRGBColor(i)
               }}
             />
           </div>
@@ -135,7 +136,7 @@ const App = () => {
               layers={store.layers}
               onSelect={store.setActiveLayer}
               onChangeLayerCount={(offset) => {
-                store.setLayerCount(store.layerCount + offset);
+                store.setLayerCount(store.layerCount + offset)
               }}
             />
 
@@ -166,7 +167,7 @@ const App = () => {
               <a
                 className="flex items-center justify-center h-8 w-8 cursor-pointer"
                 onClick={() => {
-                  store.fillLayer(store.activeColor);
+                  store.fillLayer(store.activeColor)
                 }}
               >
                 <IcBaselineFormatColorFill />
@@ -174,7 +175,7 @@ const App = () => {
               <a
                 className="flex items-center justify-center h-8 w-8 cursor-pointer"
                 onClick={() => {
-                  store.fillLayer(color.hsv(0, 0, 0));
+                  store.fillLayer(color.hsv(0, 0, 0))
                 }}
               >
                 <IcBaselineBorderClear />
@@ -185,7 +186,7 @@ const App = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default observer(App);
+export default observer(App)

@@ -3,6 +3,8 @@ import color from "color"
 import { isEqual } from "lodash"
 import { observer } from "mobx-react"
 
+// check https://github.com/Ciantic/keymapceditor
+
 const LABEL_CLASSES = [
   "items-start justify-start",
   "items-start justify-center",
